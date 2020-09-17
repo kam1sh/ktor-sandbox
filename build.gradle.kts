@@ -3,51 +3,76 @@
  *
  * This generated file contains a sample Kotlin application project to get you started.
  */
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     val kotlinVersion: String by System.getProperties()
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
 
+    id("org.jetbrains.kotlin.plugin.jpa") version kotlinVersion
+
+    id("com.github.johnrengelman.shadow") version "5.2.0"
+
     // Apply the application plugin to add support for building a CLI application.
     application
 }
+
+group = "com.example"
 
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenCentral()
 }
 
 val kotlinVersion: String by System.getProperties()
+val jacksonVersion: String by project
 val ktorVersion: String by project
 val koinVersion: String by project
+val hibernateVersion: String by project
+val hikariVersion: String by project
 
 dependencies {
+
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
     // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(kotlin("stdlib-jdk8"))
 
-    // Use the Kotlin test library.
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-
-    // Use the Kotlin JUnit integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-auth:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
+    implementation("org.koin:koin-ktor:2.1.6")
 
+    implementation("mysql:mysql-connector-java:8.0.20")
+    implementation("org.hibernate:hibernate-core:$hibernateVersion")
+    implementation("org.hibernate:hibernate-entitymanager:$hibernateVersion")
+    implementation("org.hibernate:hibernate-hikaricp:$hibernateVersion")
+    implementation("com.zaxxer:HikariCP:$hikariVersion")
+
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+
+/*
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("org.koin:koin-logger-slf4j:$koinVersion")
+*/
 
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
 application {
-    // Define the main class for the application.
-    mainClassName = "AppKt"
+    mainClassName = "com.example.AppKt"
 }
