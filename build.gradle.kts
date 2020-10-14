@@ -9,6 +9,8 @@ plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
 
+    id("com.github.johnrengelman.shadow") version "5.2.0"
+
     // Apply the application plugin to add support for building a CLI application.
     application
 }
@@ -17,6 +19,7 @@ repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    maven { url = uri("https://dl.bintray.com/kam1sh/krait") }
 }
 
 val kotlinVersion: String by System.getProperties()
@@ -43,11 +46,14 @@ dependencies {
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("org.koin:koin-logger-slf4j:$koinVersion")
 
+    implementation("com.github.kam1sh.krait:krait-core:0.3.1")
+    implementation("com.github.kam1sh.krait:krait-yaml:0.3.1")
+
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 }
 
 application {
     // Define the main class for the application.
-    mainClassName = "AppKt"
+    mainClassName = "com.github.kam1sh.sandbox.AppKt"
 }
