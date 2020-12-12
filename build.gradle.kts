@@ -38,6 +38,7 @@ dependencies {
 
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-auth:$ktorVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
 
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-ktor:$koinVersion")
