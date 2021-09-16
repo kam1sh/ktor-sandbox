@@ -1,48 +1,44 @@
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.LoggerContext
 import io.ktor.application.*
-import io.ktor.routing.get
-import io.ktor.routing.routing
+import io.ktor.auth.*
+import io.ktor.response.*
+import io.ktor.routing.*
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.util.*
+import io.ktor.util.pipeline.*
 import kotlinx.coroutines.*
-import org.koin.dsl.module
-import org.koin.ktor.ext.Koin
-import org.koin.ktor.ext.get
-import org.koin.ktor.ext.modules
-import org.koin.logger.SLF4JLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-val module = module {
-    factory<ApplicationCall> { ApplicationCallHolder.get() ?: throw IllegalStateException("There is no call at this moment.") }
-}
-
-object ApplicationCallHolder {
-    val localValue = ThreadLocal<ApplicationCall>()
-
-    fun with(value: ApplicationCall, block: suspend CoroutineScope.() -> Unit) {
-        GlobalScope.launch(Dispatchers.Default + localValue.asContextElement(value), block=block)
-    }
-
-    fun get(): ApplicationCall? = localValue.get()
-}
-
 fun Application.main() {
-    install(Koin) {
-        SLF4JLogger()
-        modules(module)
-    }
 
-    routing {
-        intercept(ApplicationCallPipeline.Call) {
-            ApplicationCallHolder.with(call) {
-                proceed()
+    install(Authentication) {
+        basic {
+            realm = "hi there"
+            validate { creds ->
+                if (creds.name == "test" && creds.password == "123") UserIdPrincipal(creds.name) else null
             }
         }
-        get("/") {
-            val c = application.get<ApplicationCall>()
-            println(c)
+    }
+    val writeAuthPhase = PipelinePhase("WriteAuth")
+    routing {
+        route("/test") {
+            val testRoute = authenticate {
+                get {
+                    call.respondText("123")
+                }
+            }
+            val item = testRoute.items.find { it.name == "Challenge" }
+            println(item)
+            testRoute.insertPhaseBefore(Authentication.ChallengePhase, writeAuthPhase)
+            testRoute.intercept(writeAuthPhase) {
+                println(call.response.headers.allValues().toMap())
+                proceed()
+            }
+            println(testRoute.items)
+
         }
     }
 }

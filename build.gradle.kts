@@ -14,14 +14,11 @@ plugins {
 }
 
 repositories {
-    // Use jcenter for resolving dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
 }
 
 val kotlinVersion: String by System.getProperties()
 val ktorVersion: String by project
-val koinVersion: String by project
 
 dependencies {
     // Align versions of all Kotlin components
@@ -37,11 +34,9 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("io.ktor:ktor-auth:$ktorVersion")
-
-    implementation("org.koin:koin-core:$koinVersion")
-    implementation("org.koin:koin-ktor:$koinVersion")
-    implementation("org.koin:koin-logger-slf4j:$koinVersion")
 
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:1.2.3")
